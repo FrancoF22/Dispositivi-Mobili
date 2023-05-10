@@ -1,0 +1,7 @@
+{
+  "name": "Geo-Piece",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
