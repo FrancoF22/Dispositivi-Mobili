@@ -1,0 +1,12 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\src",
+    "\\src\\app",
+    "\\src\\app\\home",
+    "\\src\\app\\settings",
+    "\\src\\app\\sidebar"
+  ],
+  "SelectedNode": "\\src\\app\\settings\\settings.page.scss",
+  "PreviewInSolutionExplorer": false
+}

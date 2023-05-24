@@ -4,6 +4,8 @@ import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { HomePage } from './home.page';
 
+import { MapComponent } from '../mappa/mappa.component';
+
 import { HomePageRoutingModule } from './home-routing.module';
 
 
@@ -14,6 +16,6 @@ import { HomePageRoutingModule } from './home-routing.module';
     IonicModule,
     HomePageRoutingModule
   ],
-  declarations: [HomePage]
+  declarations: [HomePage, MapComponent]
 })
 export class HomePageModule {}
