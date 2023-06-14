@@ -22,12 +22,12 @@ const routes: Routes = [
     redirectTo: 'tabs/news' 
   },
   {
-    path: 'exams',
-    redirectTo: 'tabs/exams'  
+    path: 'home',
+    redirectTo: 'tabs/home'  
   },
   {
-    path: 'lessons',
-    redirectTo: 'tabs/lessons'  
+    path: 'create-cache',
+    redirectTo: 'tabs/create-cache'  
   },
   {
     path: 'profile',
