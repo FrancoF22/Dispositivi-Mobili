@@ -1,0 +1,24 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title color="light">Login</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="animated fadeIn login auth-page">
+  <div class="auth-content">
+
+    <!-- Logo -->
+    <div padding-horizontal text-center class="animated fadeInDown">
+      <div class="logo"></div>
+    </div>
+
+    <form [formGroup]="loginFormModel">
+      <ion-label><ion-icon name="person-outline" item-start></ion-icon>Username</ion-label>
+      <ion-input id="username" type="text" formControlName="username"></ion-input>
+      <ion-label><ion-icon name="lock-open-outline" item-start></ion-icon>Password</ion-label>
+      <ion-input id="password" type="password" formControlName="password"></ion-input>
+      <ion-button (click)="onSubmit()" [disabled]="!loginFormModel.valid">Invia</ion-button>
+    </form>
+
+  </div>
+</ion-content>

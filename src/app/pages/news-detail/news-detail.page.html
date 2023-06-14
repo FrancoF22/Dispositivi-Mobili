@@ -1,0 +1,13 @@
+<ion-content padding>
+  <ion-card *ngIf="(news | async) as n">
+    <ion-card-header>
+      <ion-card-title>{{n.title}}</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div>{{n.description}}</div>
+      <div>Pubblicato da: <b>{{n.publishedBy}}</b></div>
+      <div>Tipologia: <b>{{n.type.type}}</b></div>
+
+    </ion-card-content>
+  </ion-card>
+</ion-content>

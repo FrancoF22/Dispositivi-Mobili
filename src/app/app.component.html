@@ -1,17 +1,41 @@
+<ion-menu contentId="main-content" swipeGesture="false">
+  <ion-header>
+    <ion-toolbar>
+      <ion-text color="light">
+        <div *ngIf="user as u">
+          <ion-title>{{u.username}}</ion-title>
+        </div>
+      </ion-text>
+    </ion-toolbar>
+
+    <ion-button fill="solid" size="small" color="light" (click)="onProfile()">
+      <ion-icon name="person-circle-outline"></ion-icon> Profilo
+    </ion-button>
+
+    <ion-button fill="solid" size="small" color="light" (click)="onLogout()">
+      <ion-icon name="log-out-outline"></ion-icon> Logout
+    </ion-button>
+
+  </ion-header>
+  
+  <ion-content class="ion-padding">
+    <!-- More menu content here -->
+  </ion-content>
+
+</ion-menu>
+
+
+<div class="ion-page" id="main-content">
+  <ion-header>
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-menu-button></ion-menu-button>
+      </ion-buttons>
+      <ion-title>Menu</ion-title>
+    </ion-toolbar>
+  </ion-header>
+</div>
+
 <ion-app>
   <ion-router-outlet></ion-router-outlet>
-
-  <ion-tabs>
-    <ion-tab-bar slot="bottom">
-      <ion-tab-button tab="tab1">
-        <ion-icon name="home"></ion-icon>
-        <ion-label>Home</ion-label>
-      </ion-tab-button>
-
-      <ion-tab-button tab="tab2">
-        <ion-icon name="settings"></ion-icon>
-        <ion-label>Settings</ion-label>
-      </ion-tab-button>
-    </ion-tab-bar>
-  </ion-tabs>
 </ion-app>

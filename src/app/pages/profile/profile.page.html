@@ -1,0 +1,48 @@
+<ion-header>
+  <ion-toolbar color="primary" text-center>
+    <ion-title>Il mio profilo</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content padding>
+  
+  <ion-grid>
+    <ion-row>
+      <div *ngIf="user && user.photo">
+        <!-- <ion-img [src]="user.photo.webPath"></ion-img> -->
+        <ion-img [src]="'data:image/jpeg;base64, ' + user.photo.base64String"></ion-img>
+      </div>
+    </ion-row>
+    <ion-row>
+      <ion-button (click)="onTakePhoto()">
+        <ion-icon name="camera"></ion-icon>
+      </ion-button>    
+    </ion-row>
+  </ion-grid>
+
+  
+  <form [formGroup]="profileFormModel">
+    <ion-list no-lines>
+      <ion-item class="animated fadeInUp">
+        <ion-label position="floating">Username</ion-label>
+        <ion-input type="text" formControlName="username" label=""></ion-input>
+      </ion-item>
+      <p ion-text class="text08" *ngIf="profileFormModel.get('username')?.touched && profileFormModel.get('username')?.invalid">
+        <ion-text color="danger">Il campo email è richiesto</ion-text>
+      </p>
+      <ion-item class="animated fadeInUp">
+        <ion-label position="floating">Password</ion-label>
+        <ion-input type="password" formControlName="password" label=""></ion-input>
+      </ion-item>
+    </ion-list>
+    <div margin-top="30px" align="center">
+      <ion-button icon-left size="medium" shape="round" color="primary" (click)="onSubmit()" [disabled]="!profileFormModel.valid" tappable>
+        Salva
+      </ion-button>
+      <ion-button icon-left size="medium" shape="round" color="primary" (click)="onCancel()" tappable>
+        Annulla
+      </ion-button>
+    </div>
+  </form>
+</ion-content>
