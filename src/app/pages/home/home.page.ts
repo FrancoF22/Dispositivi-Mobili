@@ -8,8 +8,10 @@ import { Geolocation } from '@capacitor/geolocation';
   styleUrls: ['./home.page.scss'],
 })
 export class HomePage implements OnInit {
-  @ViewChild(MapComponent, { static: false }) mapComponent: MapComponent | undefined;
-
+  @ViewChild(MapComponent, { static: false }) mapComponent!: MapComponent;
+  mostraFormCreazioneCache = false;
+  nomeCache!: String;
+  descrizioneCache!: String;
   constructor() { }
 
   ngOnInit() {
@@ -26,5 +28,20 @@ export class HomePage implements OnInit {
     } catch (error) {
       console.log('Error getting location', error);
     }
+  }
+
+  creaCache() {
+    this.mapComponent.abilitaSelezionePunto();
+    this.mostraFormCreazioneCache = true;
+  }
+
+  private abilitaSelezionePunto() {
+    // Implementa la logica per attivare la selezione del punto sulla mappa
+  }
+
+  salvaCache() {
+
+    this.mapComponent.salvaCache(this.nomeCache, this.descrizioneCache);
+    this.mostraFormCreazioneCache = false;
   }
 }

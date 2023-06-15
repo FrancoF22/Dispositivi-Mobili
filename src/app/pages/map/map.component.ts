@@ -18,6 +18,9 @@ import VectorSource from 'ol/source/Vector';
 })
 export class MapComponent implements OnInit, AfterViewInit {
   map: Map | undefined;
+  nomeCache!: String;
+  descrizioneCache!: String;
+  coordinateSelezione: any;
 
   constructor(private elementRef: ElementRef) { }
 
@@ -74,6 +77,31 @@ export class MapComponent implements OnInit, AfterViewInit {
 
       this.map.addLayer(markerLayer);
     }
+  }
+  abilitaSelezionePunto() {
+    // Implementa la logica per abilitare la selezione del punto sulla mappa utilizzando la libreria ol
+  }
+
+  salvaCache(nomeCache: String,descrizioneCache: String) {
+    // Salvataggio della cache nel database o in un altro sistema di archiviazione
+    const nuovaCache = {
+      nome: this.nomeCache,
+      descrizione: this.descrizioneCache,
+      coordinate: this.coordinateSelezione // Coordinate selezionate sulla mappa
+    };
+
+    // Aggiorna la mappa con l'aggiunta della nuova cache
+    this.aggiornaMappaConCache(nuovaCache);
+
+    // Nascondi il form di creazione della cache
+
+    // Resettare i campi del form
+    this.nomeCache = '';
+    this.descrizioneCache = '';
+  }
+
+  private aggiornaMappaConCache(cache: any) {
+    // Implementa la logica per aggiornare la mappa con l'aggiunta della cache
   }
 
 }

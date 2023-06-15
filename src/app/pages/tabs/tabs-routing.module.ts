@@ -16,10 +16,6 @@ const routes: Routes = [
         path: 'home',
         loadChildren: () => import('../home/home.module').then( m => m.HomePageModule),
       },
-      {
-        path: 'create-cache',
-        loadChildren: () => import('../create-cache/create-cache.module').then( m => m.CreateCachePageModule),
-    },
     {
       path: 'news/:id',
       loadChildren: () => import('../news-detail/news-detail.module').then( m => m.NewsDetailPageModule)

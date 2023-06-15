@@ -26,10 +26,6 @@ const routes: Routes = [
     redirectTo: 'tabs/home'  
   },
   {
-    path: 'create-cache',
-    redirectTo: 'tabs/create-cache'  
-  },
-  {
     path: 'profile',
     loadChildren: () => import('./pages/profile/profile.module').then( m => m.ProfilePageModule)
   },

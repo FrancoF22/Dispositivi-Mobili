@@ -12,5 +12,26 @@
   </ion-header>
   <div id="map-container">
     <app-map></app-map>
+
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+      <ion-fab-button (click)="creaCache()">
+        <ion-icon name="add"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+
+    <!-- Form di creazione della cache -->
+    <ion-card *ngIf="mostraFormCreazioneCache">
+      <ion-card-content>
+        <ion-item>
+          <ion-label position="floating">Nome</ion-label>
+          <ion-input [(ngModel)]="nomeCache"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Descrizione</ion-label>
+          <ion-input [(ngModel)]="descrizioneCache"></ion-input>
+        </ion-item>
+      </ion-card-content>
+      <ion-button expand="full" (click)="salvaCache()">Salva</ion-button>
+    </ion-card>
   </div>
 </ion-content>
