@@ -82,7 +82,7 @@ export class MapComponent implements OnInit, AfterViewInit {
             image: new Icon({
               src: '../assets/images/cache_marker.png',
               anchor: [0.5, 1],
-              scale: 0.3,
+              scale: 0.125,
               opacity: 0.9,
             }),
           });
@@ -129,33 +129,35 @@ export class MapComponent implements OnInit, AfterViewInit {
   }
 
   abilitaSelezionePunto() {
-    this.selectInteraction = new Select();
-    this.map.addInteraction(this.selectInteraction);
+    let markerFeature: Feature | null = null;
 
-    this.selectInteraction.on('select', (event) => {
-      const selectedFeatures = event.target.getFeatures();
-      if (selectedFeatures.getLength() > 0) {
-        this.selectedMarker = selectedFeatures.item(0);
-        if (this.selectedMarker) {
-          const geometry = this.selectedMarker.getGeometry();
-          if (geometry instanceof Point) {
-            const coordinates = geometry.getCoordinates();
-            this.selectedCoordinates = coordinates;
-            this.clearSelection();
-            this.setMapCenter(coordinates[1], coordinates[0]);
-          } else {
-            console.error('Il marker selezionato non è un punto.');
-          }
-        } else {
-          console.error('Il marker selezionato non è definito.');
-        }
-      } else {
-        this.selectedCoordinates = [NaN, NaN];
-        this.clearMarkers();
+    // Aggiungi l'evento click per posizionare il marker
+    this.map.on('click', (event) => {
+      const coordinate = event.coordinate;
+      console.log('Coordinate selezionate:', coordinate);
+
+      // Rimuovi il marker temporaneo precedente, se presente
+      if (markerFeature) {
+        this.markerSource.removeFeature(markerFeature);
       }
+
+      // Crea un nuovo marker temporaneo
+      markerFeature = new Feature({
+        geometry: new Point(coordinate),
+      });
+
+      const markerStyle = new Style({
+        image: new Icon({
+          src: '../assets/images/marker_temporaneo.png',
+          anchor: [0.5, 1],
+          scale: 0.06,
+        }),
+      });
+
+      markerFeature.setStyle(markerStyle);
+      this.markerSource.addFeature(markerFeature);
     });
   }
-
 
   disabilitaSelezionePunto() {
     if (this.selectInteraction) {
@@ -196,6 +198,10 @@ export class MapComponent implements OnInit, AfterViewInit {
           throw new Error(error);
         })
       ).subscribe();
+    }
+    if (this.selectedMarker) {
+      this.markerSource.removeFeature(this.selectedMarker);
+      this.selectedMarker = null;
     }
   }
 
