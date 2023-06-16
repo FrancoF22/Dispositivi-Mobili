@@ -1,15 +1,20 @@
 import { Component, OnInit, ElementRef, AfterViewInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import Map from 'ol/Map';
 import View from 'ol/View';
 import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
 import * as olProj from 'ol/proj';
-
+import { tap, catchError } from 'rxjs/operators';
 import { Feature } from 'ol';
 import { Point } from 'ol/geom';
 import { Style, Icon } from 'ol/style';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
+import Select from 'ol/interaction/Select';
+import { Coordinate } from 'ol/coordinate';
+
+import { Cache } from 'src/app/models/cache.model'; // Importa il modello Cache
 
 @Component({
   selector: 'app-map',
@@ -17,22 +22,34 @@ import VectorSource from 'ol/source/Vector';
   styleUrls: ['./map.component.scss'],
 })
 export class MapComponent implements OnInit, AfterViewInit {
-  map: Map | undefined;
-  nomeCache!: String;
-  descrizioneCache!: String;
-  coordinateSelezione: any;
+  map!: Map;
 
-  constructor(private elementRef: ElementRef) { }
+  private selectInteraction!: Select;
+  private selectedCoordinates!: Coordinate;
+  private markerSource!: VectorSource;
+  private markerLayer!: any;
+  nomeCache!: string;
+  descrizioneCache!: string;
+  selectedMarker: Feature | null = null;
+
+  constructor(private elementRef: ElementRef, private http: HttpClient) { }
 
   ngOnInit() {
-    // ...
-  }
-
-  ngAfterViewInit() {
     this.initMap();
   }
 
+  ngAfterViewInit() {
+    this.map.on('postrender', () => {
+      this.caricaCache();
+    });
+  }
+
   initMap() {
+    this.markerSource = new VectorSource();
+    this.markerLayer = new VectorLayer({
+      source: this.markerSource,
+    });
+
     this.map = new Map({
       target: this.elementRef.nativeElement.querySelector('.map-container'),
       layers: [
@@ -41,12 +58,50 @@ export class MapComponent implements OnInit, AfterViewInit {
             attributions: [],
           }),
         }),
+        this.markerLayer,
       ],
       view: new View({
-        center: [0, 0],
+        center: olProj.fromLonLat([0, 0]),
         zoom: 2,
       }),
     });
+  }
+
+  caricaCache() {
+    this.http.get<Cache[]>('http://localhost:3000/cache').pipe(
+      tap((response: Cache[]) => {
+        this.clearMarkers();
+
+        response.forEach((cache: Cache) => {
+          const markerFeature = new Feature({
+            geometry: new Point(olProj.fromLonLat([cache.longitude, cache.latitude])),
+            id: cache.id.toString(),
+          });
+
+          const markerStyle = new Style({
+            image: new Icon({
+              src: '../assets/images/cache_marker.png',
+              anchor: [0.5, 1],
+              scale: 0.3,
+              opacity: 0.9,
+            }),
+          });
+
+          markerFeature.setStyle(markerStyle);
+
+          const existingFeature = this.markerSource.getFeatureById(cache.id.toString());
+          if (existingFeature) {
+            this.markerSource.removeFeature(existingFeature);
+          }
+
+          this.markerSource.addFeature(markerFeature);
+        });
+      }),
+      catchError((error) => {
+        console.error('Errore durante il recupero delle cache:', error);
+        throw new Error(error);
+      })
+    ).subscribe();
   }
 
   setMapCenter(latitude: number, longitude: number) {
@@ -54,11 +109,6 @@ export class MapComponent implements OnInit, AfterViewInit {
       const view = this.map.getView();
       view.setCenter(olProj.fromLonLat([longitude, latitude]));
       view.setZoom(18);
-
-      const markerSource = new VectorSource();
-      const markerLayer = new VectorLayer({
-        source: markerSource,
-      });
 
       const markerFeature = new Feature({
         geometry: new Point(olProj.fromLonLat([longitude, latitude])),
@@ -73,35 +123,112 @@ export class MapComponent implements OnInit, AfterViewInit {
       });
 
       markerFeature.setStyle(markerStyle);
-      markerSource.addFeature(markerFeature);
-
-      this.map.addLayer(markerLayer);
+      this.markerSource.clear();
+      this.markerSource.addFeature(markerFeature);
     }
   }
+
   abilitaSelezionePunto() {
-    // Implementa la logica per abilitare la selezione del punto sulla mappa utilizzando la libreria ol
+    this.selectInteraction = new Select();
+    this.map.addInteraction(this.selectInteraction);
+
+    this.selectInteraction.on('select', (event) => {
+      const selectedFeatures = event.target.getFeatures();
+      if (selectedFeatures.getLength() > 0) {
+        this.selectedMarker = selectedFeatures.item(0);
+        if (this.selectedMarker) {
+          const geometry = this.selectedMarker.getGeometry();
+          if (geometry instanceof Point) {
+            const coordinates = geometry.getCoordinates();
+            this.selectedCoordinates = coordinates;
+            this.clearSelection();
+            this.setMapCenter(coordinates[1], coordinates[0]);
+          } else {
+            console.error('Il marker selezionato non è un punto.');
+          }
+        } else {
+          console.error('Il marker selezionato non è definito.');
+        }
+      } else {
+        this.selectedCoordinates = [NaN, NaN];
+        this.clearMarkers();
+      }
+    });
   }
 
-  salvaCache(nomeCache: String,descrizioneCache: String) {
-    // Salvataggio della cache nel database o in un altro sistema di archiviazione
-    const nuovaCache = {
-      nome: this.nomeCache,
-      descrizione: this.descrizioneCache,
-      coordinate: this.coordinateSelezione // Coordinate selezionate sulla mappa
-    };
 
-    // Aggiorna la mappa con l'aggiunta della nuova cache
-    this.aggiornaMappaConCache(nuovaCache);
-
-    // Nascondi il form di creazione della cache
-
-    // Resettare i campi del form
-    this.nomeCache = '';
-    this.descrizioneCache = '';
+  disabilitaSelezionePunto() {
+    if (this.selectInteraction) {
+      this.map.removeInteraction(this.selectInteraction);
+      this.clearMarkers();
+    }
   }
 
-  private aggiornaMappaConCache(cache: any) {
-    // Implementa la logica per aggiornare la mappa con l'aggiunta della cache
+  private clearMarkers() {
+    if (this.selectedMarker) {
+      this.markerSource.removeFeature(this.selectedMarker);
+      this.selectedMarker = null;
+    }
   }
 
+  salvaCache(nomeCache: string, descrizioneCache: string) {
+    if (nomeCache && descrizioneCache && this.selectedCoordinates) {
+      const nuovaCache: Cache = {
+        id: 0,
+        latitude: this.selectedCoordinates[1],
+        longitude: this.selectedCoordinates[0],
+        title: nomeCache,
+        description: descrizioneCache,
+        photo: '',
+        qr: '',
+      };
+
+      this.http.post<Cache>('http://localhost:3000/cache', nuovaCache).pipe(
+        tap((response: Cache) => {
+          console.log('Cache creata con successo:', response);
+          this.aggiornaMappaConCache(response);
+          this.nomeCache = '';
+          this.descrizioneCache = '';
+          this.clearMarkers();
+        }),
+        catchError((error) => {
+          console.error('Errore durante la creazione della cache:', error);
+          throw new Error(error);
+        })
+      ).subscribe();
+    }
+  }
+
+  private clearSelection() {
+    if (this.selectInteraction) {
+      this.selectInteraction.getFeatures().clear();
+      this.selectedCoordinates = [NaN, NaN];
+    }
+  }
+
+  aggiornaMappaConCache(cache: Cache) {
+    const markerFeature = new Feature({
+      geometry: new Point(olProj.fromLonLat([cache.longitude, cache.latitude])),
+    });
+
+    const markerStyle = new Style({
+      image: new Icon({
+        src: '../assets/images/cache_marker.png',
+        anchor: [0.5, 1],
+        scale: 0.3,
+        opacity: 0.9,
+      }),
+    });
+
+    markerFeature.setStyle(markerStyle);
+
+    markerFeature.setId(cache.id.toString());
+
+    const existingFeature = this.markerSource.getFeatureById(cache.id.toString());
+    if (existingFeature) {
+      this.markerSource.removeFeature(existingFeature);
+    }
+
+    this.markerSource.addFeature(markerFeature);
+  }
 }
