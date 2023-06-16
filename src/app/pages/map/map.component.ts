@@ -31,6 +31,10 @@ export class MapComponent implements OnInit, AfterViewInit {
   nomeCache!: string;
   descrizioneCache!: string;
   selectedMarker: Feature | null = null;
+  private temporaryMarker: Feature | null = null; // Marker temporaneo
+
+  private selectionHandler: any; // Dichiarazione dell'handler
+
 
   constructor(private elementRef: ElementRef, private http: HttpClient) { }
 
@@ -129,20 +133,21 @@ export class MapComponent implements OnInit, AfterViewInit {
   }
 
   abilitaSelezionePunto() {
-    let markerFeature: Feature | null = null;
+    // Disattiva l'handler precedente, se presente
+    this.disabilitaSelezionePunto();
 
-    // Aggiungi l'evento click per posizionare il marker
-    this.map.on('click', (event) => {
+    // Crea un nuovo handler per la selezione del punto
+    this.selectionHandler = (event: any) => {
       const coordinate = event.coordinate;
       console.log('Coordinate selezionate:', coordinate);
 
       // Rimuovi il marker temporaneo precedente, se presente
-      if (markerFeature) {
-        this.markerSource.removeFeature(markerFeature);
+      if (this.temporaryMarker) {
+        this.markerSource.removeFeature(this.temporaryMarker);
       }
 
       // Crea un nuovo marker temporaneo
-      markerFeature = new Feature({
+      const markerFeature = new Feature({
         geometry: new Point(coordinate),
       });
 
@@ -155,14 +160,25 @@ export class MapComponent implements OnInit, AfterViewInit {
       });
 
       markerFeature.setStyle(markerStyle);
+      this.temporaryMarker = markerFeature;
       this.markerSource.addFeature(markerFeature);
-    });
+    };
+
+    // Aggiungi l'evento di click utilizzando l'handler
+    this.map.on('click', this.selectionHandler);
   }
 
   disabilitaSelezionePunto() {
-    if (this.selectInteraction) {
-      this.map.removeInteraction(this.selectInteraction);
-      this.clearMarkers();
+    // Rimuovi l'evento di click con l'handler
+    if (this.selectionHandler) {
+      this.map.un('click', this.selectionHandler);
+      this.selectionHandler = null;
+
+      // Rimuovi il marker temporaneo, se presente
+      if (this.temporaryMarker) {
+        this.markerSource.removeFeature(this.temporaryMarker);
+        this.temporaryMarker = null;
+      }
     }
   }
 
