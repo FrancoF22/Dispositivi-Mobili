@@ -10,9 +10,13 @@ import { Geolocation } from '@capacitor/geolocation';
 export class HomePage implements OnInit {
   @ViewChild(MapComponent, { static: false }) mapComponent!: MapComponent;
   mostraFormCreazioneCache = false;
-  nomeCache!: String;
-  descrizioneCache!: String;
-  constructor() { }
+  nomeCache!: string;
+  descrizioneCache!: string;
+
+  constructor() {
+    this.nomeCache = '';
+    this.descrizioneCache = '';
+  }
 
   ngOnInit() {
     this.getCurrentPosition();
@@ -35,13 +39,30 @@ export class HomePage implements OnInit {
     this.mostraFormCreazioneCache = true;
   }
 
-  private abilitaSelezionePunto() {
-    // Implementa la logica per attivare la selezione del punto sulla mappa
+  salvaCache() {
+    // Effettua il salvataggio della cache utilizzando il MapComponent
+    this.mapComponent?.salvaCache(this.nomeCache, this.descrizioneCache);
+
+    // Nascondi il form di creazione della cache
+    this.mostraFormCreazioneCache = false;
+
+    // Resetta i campi del form
+    this.nomeCache = '';
+    this.descrizioneCache = '';
+
+    // Disabilita la selezione del punto sulla mappa tramite il MapComponent
+    this.mapComponent?.disabilitaSelezionePunto();
   }
 
-  salvaCache() {
-
-    this.mapComponent.salvaCache(this.nomeCache, this.descrizioneCache);
+  annullaCreazioneCache() {
+    // Nascondi il form di creazione della cache
     this.mostraFormCreazioneCache = false;
+
+    // Resettare i campi del form
+    this.nomeCache = '';
+    this.descrizioneCache = '';
+
+    // Disabilita la selezione del punto sulla mappa tramite il MapComponent
+    this.mapComponent?.disabilitaSelezionePunto();
   }
 }
