@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "252705171921",
+    "firebase_url": "https://geo-piece-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "geo-piece",
+    "storage_bucket": "geo-piece.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:252705171921:android:75a2d45c596e89cb2158f0",
+        "android_client_info": {
+          "package_name": "io.ionic.starter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "252705171921-rf11r4f70j75469k5tm4lvqhffiutpai.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDGLSqSdrQNjMGd6c4odtAiPmRIAxjbGNw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "252705171921-rf11r4f70j75469k5tm4lvqhffiutpai.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
