@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { User } from 'src/app/models/user.model';
 import { LoginService } from 'src/app/services/login.service';
 import { PhotoService } from 'src/app/services/photo.service';
+
+import { getDatabase, ref, update, set } from "firebase/database";
 
 @Component({
   selector: 'app-profile',
@@ -11,48 +14,98 @@ import { PhotoService } from 'src/app/services/photo.service';
   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage implements OnInit {
-
+  back: boolean = false;
   protected profileFormModel!: FormGroup;
-  protected user!: User 
+  protected user!: User;
 
-  constructor(private formBuilder: FormBuilder, 
-              private loginService: LoginService,
-              private navigationController: NavController,
-              private photo: PhotoService ) { }
+  constructor(
+    private formBuilder: FormBuilder,
+    private loginService: LoginService,
+    private navigationController: NavController,
+    private photo: PhotoService,
+    public router: Router
+  ) { }
 
-    async ngOnInit() {
+  async ngOnInit() {
+    const data = this.router.url.split('/');
+    console.log(data);
+    if (data[1] == 'Home') {
+      this.back = true;
+    } else {
+      this.back = false;
+    }
+
     // Recupero il profilo dell'utente
-
     this.profileFormModel = this.formBuilder.group({
-      username: ['', Validators.compose([
-        Validators.required
-      ])],
-      password: ['']
+      name: ['', Validators.compose([Validators.required])],
+      surname: ['', Validators.compose([Validators.required])],
+      username: ['', Validators.compose([Validators.required])],
+      password: [''],
     });
 
-    this.user = (await this.loginService.getUser())!
+    this.user = (await this.loginService.getUser())!;
 
-    this.profileFormModel.patchValue({username: this.user.username, password: this.user.password});
+    this.profileFormModel.patchValue({
+      name: this.user.name,
+      surname: this.user.surname,
+      username: this.user.username,
+      password: this.user.password,
+    });
   }
 
-  onSubmit(){
-    // Qua bisognerebbe anche fare una richiesta HTTP al server per aggiornare le informazioni salvate in remoto (non fatto a lezione per limiti di tempo)
+  onSubmit() {
+    this.user.name = this.profileFormModel.value.name;
+    this.user.surname = this.profileFormModel.value.surname;
     this.user.username = this.profileFormModel.value.username;
     this.user.password = this.profileFormModel.value.password;
 
-    console.log(this.user)
-    
-    this.loginService.updateUser(this.user);
-    this.navigationController.navigateBack("/tabs"); 
+    const db = getDatabase();
+    const userRef = ref(db, 'users/' + this.user.id);
+
+    const userData = {
+      name: this.user.name,
+      surname: this.user.surname,
+      username: this.user.username,
+      password: this.user.password,
+      // Aggiungi altri campi dati se necessario
+    };
+
+    update(userRef, userData)
+      .then(() => {
+        console.log('Dati utente salvati correttamente nel database');
+
+        if (this.user.photo && this.user.photo.base64String) {
+          const photoRef = ref(db, 'users/' + this.user.id + '/photo');
+
+          const photoData = {
+            base64String: this.user.photo.base64String,
+            format: this.user.photo.format,
+            saved: true
+          };
+
+          set(photoRef, photoData)
+            .then(() => {
+              console.log('Immagine utente salvata correttamente nel database');
+              this.navigationController.navigateBack("/tabs");
+            })
+            .catch((error) => {
+              console.error('Errore durante il salvataggio dell\'immagine utente:', error);
+            });
+        } else {
+          this.navigationController.navigateBack("/tabs");
+        }
+      })
+      .catch((error) => {
+        console.error('Errore durante il salvataggio dei dati utente:', error);
+      });
   }
 
-  onCancel(){
+  onCancel() {
     this.navigationController.back();
   }
 
-  async onTakePhoto(){
+  async onTakePhoto() {
     this.user.photo = await this.photo.takeNewPhoto();
-    console.log(this.user)
+    console.log(this.user);
   }
-
 }

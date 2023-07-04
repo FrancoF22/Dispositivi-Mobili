@@ -1,7 +1,28 @@
 #map-container {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 50px;
+  right: 5px;
+  bottom: 5px;
 }
+ion-card {
+  position: fixed;
+  bottom: 1vh;
+  left: 16px;
+  right: 16px;
+  transition: transform 0.3s;
+}
+
+ion-card.show-form {
+  transform: translateY(-100%);
+}
+
+.cache-description {
+  background-color: #FFF98F;
+}
+
+.review {
+  background-color:#FFFDD0
+}
+
+

@@ -4,23 +4,18 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { HomePageRoutingModule } from './home-routing.module';
-
-import { HomePage } from './home.page';
-import { MapComponent } from '../map/map.component';
-import { ScanPageRoutingModule } from '../scan/scan-routing.module';
+import { ScanPageRoutingModule } from './scan-routing.module';
 import { QRCodeModule } from 'angularx-qrcode';
-
+import { ScanPage } from './scan.page';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    HomePageRoutingModule,
     ScanPageRoutingModule,
     QRCodeModule
   ],
-  declarations: [HomePage, MapComponent]
+  declarations: [ScanPage]
 })
-export class HomePageModule {}
+export class ScanPageModule {}

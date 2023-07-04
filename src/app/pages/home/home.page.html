@@ -1,9 +1,3 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>home</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
@@ -13,9 +7,15 @@
   <div id="map-container">
     <app-map></app-map>
 
-    <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="!mostraFormCreazioneCache">
       <ion-fab-button (click)="creaCache()">
         <ion-icon name="add"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+
+    <ion-fab vertical="bottom" horizontal="start" slot="fixed" *ngIf="!mostraFormCreazioneCache">
+      <ion-fab-button (click)="centerMap()">
+        <ion-icon name="navigate-circle-outline"></ion-icon>
       </ion-fab-button>
     </ion-fab>
 
@@ -30,9 +30,67 @@
           <ion-label position="floating">Descrizione</ion-label>
           <ion-input [(ngModel)]="descrizioneCache"></ion-input>
         </ion-item>
+        <ion-item>
+          <ion-label>Foto</ion-label>
+          <ion-button (click)="openCamera()">Fotocamera</ion-button>
+        </ion-item>
       </ion-card-content>
-      <ion-button expand="full" (click)="salvaCache()">Salva</ion-button>
-      <ion-button expand="full" (click)="annullaCreazioneCache()">Annulla</ion-button>
+      <ion-row>
+        <ion-col>
+          <ion-button expand="full" (click)="salvaCache(nomeCache, descrizioneCache, capturedPhoto)">Salva</ion-button>
+        </ion-col>
+        <ion-col>
+          <ion-button expand="full" (click)="annullaCreazioneCache()">Annulla</ion-button>
+        </ion-col>
+      </ion-row>
     </ion-card>
+
+    <ion-card *ngIf="mostraDettagliCache" [style.visibility]='content_visibility'>
+      <ion-card-header>
+        <ion-label>{{ dettagliCache?.title }}</ion-label>
+      </ion-card-header>
+
+      <ion-card-content>
+
+        <ion-item *ngIf="dettagliCache?.photo">
+          <img *ngIf="dettagliCache && dettagliCache.photo && dettagliCache.photo.base64String"
+               [src]="'data:image/jpeg;base64, ' + (dettagliCache.photo.base64String)" alt="Foto della cache">
+
+
+          <ion-label *ngIf="!dettagliCache?.photo">Foto non caricata</ion-label>
+        </ion-item>
+        <ion-item>
+
+          <ion-label class="cache-description">{{ dettagliCache?.description }}</ion-label>
+        </ion-item>
+      </ion-card-content>
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <ion-button shape="round" expand="full" class="ion-margin"
+                        (click)="mostraDettagliCache = false">Chiudi</ion-button>
+          </ion-col>
+          <ion-col>
+            <ion-button *ngIf="distanzaElevata" shape="round" expand="full" class="ion-margin" (click)="commentaCache()">Commenta</ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card>
+
+    <ion-card class="review" *ngIf="mostraCommento">
+      <ion-card-content>
+        <ion-item>
+          <ion-label position="floating">Inserisci il tuo commento</ion-label>
+          <ion-textarea [(ngModel)]="testoCommento"></ion-textarea>
+        </ion-item>
+      </ion-card-content>
+      <ion-row>
+        <ion-col>
+          <ion-button shape="round" expand="full" class="ion-margin" (click)="salvaCommento()">Salva</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-card>
+
+
   </div>
 </ion-content>

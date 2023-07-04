@@ -17,10 +17,7 @@ const routes: Routes = [
     loadChildren: () => import('./pages/tabs/tabs.module').then( m => m.TabsPageModule),
     canActivate: [AuthGuard] 
   },
-  {
-    path: 'news',
-    redirectTo: 'tabs/news' 
-  },
+  
   {
     path: 'home',
     redirectTo: 'tabs/home'  
@@ -29,6 +26,13 @@ const routes: Routes = [
     path: 'profile',
     loadChildren: () => import('./pages/profile/profile.module').then( m => m.ProfilePageModule)
   },
+  
+  {
+    path: 'scan',
+    loadChildren: () => import('./pages/scan/scan.module').then( m => m.ScanPageModule)
+  },
+  
+ 
 ];
 
 @NgModule({

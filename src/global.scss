@@ -40,6 +40,10 @@ ion-item {
   background-color: var(--ion-color-tertiary);
 }
 
+.bg-quaternary {
+  background-color: var(--ion-color-quaternary);
+}
+
 .bg-profile {
   background-image: linear-gradient(135deg, var(--ion-color-dark), var(--ion-color-primary))
 }
@@ -114,7 +118,7 @@ ion-toolbar.user-profile {
 // Custom toolbar (overriding Shadow DOM)
 ion-toolbar {
   &.ion-color-primary {
-    --ion-color-base: linear-gradient(135deg, var(--ion-color-dark), var(--ion-color-primary)) !important;
+    --ion-color-base: linear-gradient(135deg, var(--ion-color-quaternary), var(--ion-color-primary)) !important;
   }
 }
 
@@ -131,6 +135,7 @@ ion-card {
 
   .grid {
     padding: 0;
+
     .col {
       padding: 0;
     }
@@ -140,9 +145,11 @@ ion-card {
     .button-ios,
     .button-md {
       border-radius: 0;
+
       &:first-of-type {
         border-radius: 2px 0 0 2px;
       }
+
       &:last-of-type {
         border-radius: 0 2px 2px 0;
       }
@@ -157,7 +164,7 @@ ion-card {
       height: 200px;
       margin: 20px auto 8px;
       border-radius: 10%;
-      background: url("/assets/images/univaq.png") no-repeat;
+      background: url("/assets/images/logo.png") no-repeat;
       background-size: 100%;
     }
 
@@ -189,4 +196,9 @@ ion-card {
     }
   }
 
+  //scss scanner
+  body.scanner-active {
+    --background: transparent;
+    --ion-background-color: transparent;
+  }
 }

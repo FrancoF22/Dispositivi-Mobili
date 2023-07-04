@@ -1,38 +1,77 @@
+<!--
 <ion-header>
   <ion-toolbar color="primary" text-center>
-    <ion-title>Il mio profilo</ion-title>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Profile</ion-title>
   </ion-toolbar>
-</ion-header>
-
-
-<ion-content padding>
-  
-  <ion-grid>
-    <ion-row>
-      <div *ngIf="user && user.photo">
+</ion-header>-->
+<ion-content [fullscreen]="true">
+<ion-toolbar color="primary">
+  <ion-buttons slot="start">
+    <ion-menu-button *nglf="!back"></ion-menu-button>
+    <ion-back-button defaultHref="/home"></ion-back-button>
+  </ion-buttons>
+</ion-toolbar>
+<ion-grid class="main-header">
+  <div align="center">
+      <div *ngIf="user && user.photo" class="avatar-container">
         <!-- <ion-img [src]="user.photo.webPath"></ion-img> -->
-        <ion-img [src]="'data:image/jpeg;base64, ' + user.photo.base64String"></ion-img>
+        <ion-img [src]="'data:image/jpeg;base64, ' + user.photo.base64String" class="avatar-image"></ion-img>
       </div>
-    </ion-row>
-    <ion-row>
-      <ion-button (click)="onTakePhoto()">
-        <ion-icon name="camera"></ion-icon>
-      </ion-button>    
-    </ion-row>
-  </ion-grid>
-
-  
+      <div class="camera-button-container">
+        <ion-button (click)="onTakePhoto()" class="camera-button">
+          <ion-icon name="camera"></ion-icon>
+        </ion-button>
+      </div>
+  </div>
+</ion-grid>
+<br>
+<br>
+<br>
+<br>
+<!--
+<ion-row class="ion-padding-horizontal">
+  <ion-col size="6">
+    <ion-item lines="none" class="ion-text-center">
+      <ion-icon name="compass-outline" color="primary"></ion-icon>
+        <ion-label>
+          24
+          <p>Trovate</p>
+        </ion-label>
+    </ion-item>
+  </ion-col>
+  <ion-col size="6">
+    <ion-item lines="none" class="ion-text-center">
+      <ion-icon name="chatbox-outline"></ion-icon>
+        <ion-label>
+          24
+          <p>Recensioni</p>
+        </ion-label>
+    </ion-item>
+  </ion-col>
+</ion-row>
+-->
   <form [formGroup]="profileFormModel">
-    <ion-list no-lines>
+    <ion-list>
       <ion-item class="animated fadeInUp">
-        <ion-label position="floating">Username</ion-label>
+        <ion-label position="floating"><ion-icon name="person-outline"></ion-icon>Name</ion-label>
+        <ion-input type="text" formControlName="name"></ion-input>
+      </ion-item>
+      <ion-item class="animated fadeInUp">
+        <ion-label position="floating"><ion-icon name="person-outline"></ion-icon>Surname</ion-label>
+        <ion-input type="text" formControlName="surname"></ion-input>
+      </ion-item>
+      <ion-item class="animated fadeInUp">
+        <ion-label position="floating"><ion-icon name="person-outline"></ion-icon>Username</ion-label>
         <ion-input type="text" formControlName="username" label=""></ion-input>
       </ion-item>
       <p ion-text class="text08" *ngIf="profileFormModel.get('username')?.touched && profileFormModel.get('username')?.invalid">
         <ion-text color="danger">Il campo email è richiesto</ion-text>
       </p>
       <ion-item class="animated fadeInUp">
-        <ion-label position="floating">Password</ion-label>
+        <ion-label position="floating"><ion-icon name="lock-closed-outline"></ion-icon>Password</ion-label>
         <ion-input type="password" formControlName="password" label=""></ion-input>
       </ion-item>
     </ion-list>
